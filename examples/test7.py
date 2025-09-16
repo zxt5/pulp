@@ -2,7 +2,7 @@
 # Test for output of dual variables
 
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 
 # A new LP problem
 prob = LpProblem("test7", LpMinimize)

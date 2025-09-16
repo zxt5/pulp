@@ -43,7 +43,7 @@ Quickstart
 ------------
 Use ``LpVariable`` to create new variables. To create a variable x with 0  ≤  x  ≤  3::
 
-     from pulp import *
+     from pulp.pulp import *
      x = LpVariable("x", 0, 3)
 
 To create a binary variable, y, with values either 0 or 1::
@@ -2089,11 +2089,11 @@ class LpProblem:
         wasNone, dummyVar = self.fixObjective()
         # time it
         self.startClock()
-        status = solver.actualSolve(self, **kwargs)
+        status, pipe = solver.actualSolve(self, **kwargs)
         self.stopClock()
         self.restoreObjective(wasNone, dummyVar)
         self.solver = solver
-        return status
+        return status, pipe
 
     def startClock(self):
         "initializes properties with the current time"

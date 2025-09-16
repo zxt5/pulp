@@ -96,7 +96,7 @@ def makePatterns(totalRollLength: int, lenOpts: List[int]) -> List[Pattern]:
 
 
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 
 rollData = {5: [150, 0.25], 7: [200, 0.33], 9: [300, 0.40]}  # Length Demand SalePrice
 

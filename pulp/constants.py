@@ -48,12 +48,14 @@ LpStatusOptimal = 1
 LpStatusInfeasible = -1
 LpStatusUnbounded = -2
 LpStatusUndefined = -3
+LpStatusError = -4
 LpStatus = {
     LpStatusNotSolved: "Not Solved",
     LpStatusOptimal: "Optimal",
     LpStatusInfeasible: "Infeasible",
     LpStatusUnbounded: "Unbounded",
     LpStatusUndefined: "Undefined",
+    LpStatusError: "Error",
 }
 
 # solution status

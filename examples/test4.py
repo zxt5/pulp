@@ -10,7 +10,7 @@
 
 from random import *
 
-from pulp import *
+from pulp.pulp import *
 
 C = 50
 B = 500  # Resources available for the two years

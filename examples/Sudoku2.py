@@ -6,7 +6,7 @@ edited by Dr Nathan Sudermann-Merx
 """
 
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 
 # All rows, columns and values within a Sudoku take values from 1 to 9
 VALS = ROWS = COLS = range(1, 10)

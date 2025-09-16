@@ -7,7 +7,7 @@ Authors: Antony Phillips,  Dr Stuart Mitchell  2008
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 from pulp.pulp import LpConstraintVar, LpProblem
 
 

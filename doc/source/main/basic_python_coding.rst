@@ -303,7 +303,7 @@ module (file of program code) available in the module you are currently writing
 i.e. functions and values defined in pulp.py that you will be required to call, 
 become usable. In this course you will use:
 
->>> from pulp import *
+>>> from pulp.pulp import *
 
 The asterisk represents that you are importing all names from the module of 
 pulp. Calling a function defined in pulp.py now can be done as if they were 

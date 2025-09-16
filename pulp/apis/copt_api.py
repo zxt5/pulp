@@ -464,7 +464,7 @@ class COPT_DLL(LpSolver):
 
         def extract(self, lp):
             """
-            Extract data from PuLP lp structure
+            Extract data from pulp.pulp lp structure
 
             This function borrowed implementation of LpSolver.getCplexStyleArrays,
             with some modifications.

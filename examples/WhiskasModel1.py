@@ -8,7 +8,7 @@ Authors: Antony Phillips, Dr Stuart Mitchell  2007
 
 # BEGIN import_pulp
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 
 # END import_pulp
 

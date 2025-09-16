@@ -55,6 +55,7 @@ class SCIP_CMD(LpSolver_CMD):
         maxNodes=None,
         logPath=None,
         threads=None,
+        env=None,
     ):
         """
         :param bool mip: if False, assume LP even if integer variables
@@ -82,6 +83,7 @@ class SCIP_CMD(LpSolver_CMD):
             maxNodes=maxNodes,
             threads=threads,
             logPath=logPath,
+            env=env,
         )
 
     SCIP_STATUSES = {
@@ -141,8 +143,8 @@ class SCIP_CMD(LpSolver_CMD):
         command: List[str] = []  # type: ignore[annotation-unchecked]
         command.append(self.path)
         command.extend(["-s", tmpOptions])
-        if not self.msg:
-            command.append("-q")
+        # if not self.msg:
+            # command.append("-q")
         if "logPath" in self.optionsDict:
             command.extend(["-l", self.optionsDict["logPath"]])
 
@@ -170,13 +172,21 @@ class SCIP_CMD(LpSolver_CMD):
             options_file.write("\n".join(file_options))
 
         pipe = self.get_pipe()
-        subprocess.check_call(command, stdout=pipe, stderr=pipe)
+        try:
+            subprocess.check_call(command, env=self.env, stdout=pipe, stderr=pipe)
+        except Exception as e:
+            if pipe is not None:
+                pipe.close()
+            self.delete_tmp_files(tmpLp, tmpSol, tmpOptions)
+            return constants.LpStatusError, pipe
 
         # Close the pipe now if we used it.
         if pipe is not None:
             pipe.close()
 
         if not os.path.exists(tmpSol):
+            self.delete_tmp_files(tmpLp, tmpSol, tmpOptions)
+            return constants.LpStatusError, pipe
             raise PulpSolverError("PuLP: Error while executing " + self.path)
         status, values = self.readsol(tmpSol)
         # Make sure to add back in any 0-valued variables SCIP leaves out.
@@ -187,7 +197,7 @@ class SCIP_CMD(LpSolver_CMD):
         lp.assignVarsVals(finalVals)
         lp.assignStatus(status)
         self.delete_tmp_files(tmpLp, tmpSol, tmpOptions)
-        return status
+        return status, pipe
 
     @staticmethod
     def readsol(filename):
@@ -200,6 +210,7 @@ class SCIP_CMD(LpSolver_CMD):
                 assert comps[0] == "solution status"
                 assert len(comps) == 2
             except Exception:
+                return constants.LpStatusError, {}
                 raise PulpSolverError(f"Can't get SCIP solver status: {line!r}")
 
             status = SCIP_CMD.SCIP_STATUSES.get(
@@ -224,6 +235,7 @@ class SCIP_CMD(LpSolver_CMD):
                     comps = line.split()
                     values[comps[0]] = float(comps[1])
                 except:
+                    return constants.LpStatusError, {}
                     raise PulpSolverError(f"Can't read SCIP solver output: {line!r}")
 
             # if we have a solution, we should change status to Optimal by conventio

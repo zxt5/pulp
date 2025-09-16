@@ -3,7 +3,7 @@ The Beer Distribution Problem for the PuLP Modeller with Extension for a Warehou
 """
 
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 
 # Creates a list of all the supply nodes
 Warehouses = ["A", "B"]

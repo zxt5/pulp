@@ -11,7 +11,7 @@ from decimal import Decimal
 from typing import Union, Optional, Type
 
 
-from pulp import (
+from pulp.pulp import (
     FixedElasticSubProblem,
     LpAffineExpression,
     LpConstraint,
@@ -21,8 +21,8 @@ from pulp import (
     LpVariable,
     PulpSolverError,
 )
-from pulp import constants as const
-from pulp import lpSum
+from pulp.pulp import constants as const
+from pulp.pulp import lpSum
 import pulp.apis as solvers
 from pulp.constants import PulpError
 from pulp.tests.bin_packing_problem import create_bin_packing_problem

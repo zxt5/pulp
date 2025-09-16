@@ -56,6 +56,7 @@ class HiGHS_CMD(LpSolver_CMD):
         threads=None,
         logPath=None,
         warmStart=False,
+        env=None,
     ):
         """
         :param bool mip: if False, assume LP even if integer variables
@@ -83,6 +84,7 @@ class HiGHS_CMD(LpSolver_CMD):
             threads=threads,
             logPath=logPath,
             warmStart=warmStart,
+            env=env,
         )
 
     def defaultPath(self):
@@ -107,8 +109,8 @@ class HiGHS_CMD(LpSolver_CMD):
         file_options.append(f"solution_file={tmpSol}")
         file_options.append("write_solution_to_file=true")
         file_options.append(f"write_solution_style={HiGHS_CMD.SOLUTION_STYLE}")
-        if not self.msg:
-            file_options.append("log_to_console=false")
+        # if not self.msg:
+            # file_options.append("log_to_console=false")
         if "threads" in self.optionsDict:
             file_options.append(f"threads={self.optionsDict['threads']}")
         if "gapRel" in self.optionsDict:
@@ -152,7 +154,7 @@ class HiGHS_CMD(LpSolver_CMD):
 
         pipe = self.get_pipe()
 
-        process = subprocess.Popen(command, stdout=pipe, stderr=pipe)
+        process = subprocess.Popen(command, env=self.env, stdout=pipe, stderr=pipe)
 
         # HiGHS return code semantics (see: https://github.com/ERGO-Code/HiGHS/issues/527#issuecomment-946575028)
         # - -1: error
@@ -160,6 +162,10 @@ class HiGHS_CMD(LpSolver_CMD):
         # -  1: warning
 
         if process.wait() == -1:
+            if pipe is not None:
+                pipe.close()
+            self.delete_tmp_files(tmpMps, tmpSol, tmpOptions, tmpLog, tmpMst)
+            return constants.LpStatusError, pipe
             raise PulpSolverError(
                 "Pulp: Error while executing HiGHS, use msg=True for more details"
                 + self.path
@@ -171,13 +177,25 @@ class HiGHS_CMD(LpSolver_CMD):
         lines = [line.strip().split() for line in lines]
 
         # LP
-        model_line = [line for line in lines if line[:2] == ["Model", "status"]]
+        try:
+            model_line = [line for line in lines if line[:2] == ["Model", "status"]]
+        except Exception:
+            if pipe is not None:
+                pipe.close()
+            self.delete_tmp_files(tmpMps, tmpSol, tmpOptions, tmpLog, tmpMst)
+            return constants.LpStatusError, pipe
         if len(model_line) > 0:
             model_status = " ".join(model_line[0][3:])  # Model status: ...
         else:
             # ILP
-            model_line = [line for line in lines if "Status" in line][0]
-            model_status = " ".join(model_line[1:])
+            try:
+                model_line = [line for line in lines if "Status" in line][0]
+                model_status = " ".join(model_line[1:])
+            except Exception:
+                if pipe is not None:
+                    pipe.close()
+                self.delete_tmp_files(tmpMps, tmpSol, tmpOptions, tmpLog, tmpMst)
+                return constants.LpStatusError, pipe
         sol_line = [line for line in lines if line[:2] == ["Solution", "status"]]
         sol_line = sol_line[0] if len(sol_line) > 0 else ["Not solved"]
         sol_status = sol_line[-1]
@@ -226,7 +244,7 @@ class HiGHS_CMD(LpSolver_CMD):
         if status == constants.LpStatusOptimal:
             lp.assignVarsVals(values)
 
-        return status
+        return status, pipe
 
     def writesol(self, filename, lp):
         """Writes a HiGHS solution file"""
@@ -340,8 +358,8 @@ class HiGHS(LpSolver):
                 for cb_type in self.callbacksToActivate:
                     lp.solverModel.startCallback(cb_type)
 
-            if not self.msg:
-                lp.solverModel.setOptionValue("output_flag", False)
+            # if not self.msg:
+            #     lp.solverModel.setOptionValue("output_flag", False)
 
             if self.gapRel is not None:
                 lp.solverModel.setOptionValue("mip_rel_gap", self.gapRel)

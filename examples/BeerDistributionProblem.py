@@ -5,7 +5,7 @@ Authors: Antony Phillips, Dr Stuart Mitchell  2007
 """
 
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 
 # Creates a list of all the supply nodes
 Warehouses = ["A", "B"]

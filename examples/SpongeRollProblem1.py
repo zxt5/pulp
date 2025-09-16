@@ -5,7 +5,7 @@ Authors: Antony Phillips, Dr Stuart Mitchell   2007
 """
 
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 
 # A list of all the roll lengths is created
 LenOpts = ["5", "7", "9"]

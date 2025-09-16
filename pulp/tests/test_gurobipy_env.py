@@ -1,6 +1,6 @@
 import unittest
 
-from pulp import GUROBI, LpProblem, LpVariable, const
+from pulp.pulp import GUROBI, LpProblem, LpVariable, const
 
 try:
     import gurobipy as gp  # type: ignore[import-not-found, import-untyped, unused-ignore]

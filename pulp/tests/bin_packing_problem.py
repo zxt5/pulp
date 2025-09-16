@@ -1,4 +1,4 @@
-from pulp import *
+from pulp.pulp import *
 import random
 from itertools import product
 

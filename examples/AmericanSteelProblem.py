@@ -5,7 +5,7 @@ Authors: Antony Phillips, Dr Stuart Mitchell  2007
 """
 
 # Import PuLP modeller functions
-from pulp import *
+from pulp.pulp import *
 
 # List of all the nodes
 Nodes = [

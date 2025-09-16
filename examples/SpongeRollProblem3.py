@@ -79,7 +79,7 @@ def makePatterns(
 
 
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 
 # The Total Roll Length is entered
 totalRollLength = 20

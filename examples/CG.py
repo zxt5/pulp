@@ -7,7 +7,7 @@ Authors: Antony Phillips,  Dr Stuart Mitchell  2008
 from typing import Dict, List, Optional, Tuple, Union
 
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 
 
 class Pattern:

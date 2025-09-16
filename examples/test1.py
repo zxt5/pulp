@@ -2,7 +2,7 @@
 # @(#) $Jeannot: test1.py,v 1.11 2005/01/06 21:22:39 js Exp $
 
 # Import PuLP modeler functions
-from pulp import *
+from pulp.pulp import *
 
 # A new LP problem
 prob = LpProblem("test1", LpMinimize)

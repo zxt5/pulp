@@ -52,7 +52,7 @@ Quickstart
 
 Use ``LpVariable`` to create new variables. To create a variable x with 0  ≤  x  ≤  3::
 
-     from pulp import *
+     from pulp.pulp import *
      x = LpVariable("x", 0, 3)
 
 To create a binary variable, y, with values either 0 or 1::

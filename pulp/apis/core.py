@@ -93,7 +93,7 @@ class LpSolver:
     name = "LpSolver"
 
     def __init__(
-        self, mip=True, msg=True, options=None, timeLimit=None, *args, **kwargs
+        self, mip=True, msg=True, options=None, timeLimit=None, env=None, *args, **kwargs
     ):
         """
         :param bool mip: if False, assume LP even if integer variables
@@ -110,6 +110,7 @@ class LpSolver:
         self.msg = msg
         self.options = options
         self.timeLimit = timeLimit
+        self.env = env
 
         # here we will store all other relevant information including:
         # gapRel, gapAbs, maxMemory, maxNodes, threads, logPath, timeMode
@@ -385,7 +386,8 @@ class LpSolver_CMD(LpSolver):
     def get_pipe(self):
         if self.msg:
             return None
-        return open(os.devnull, "w")
+        # return open(os.devnull, "w")
+        return open(os.path.join(self.tmpDir, f"glip_output_{uuid4().hex}.log"), "w")
 
 
 def ctypesArrayFill(myList, type=ctypes.c_double):

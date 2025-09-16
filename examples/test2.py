@@ -8,7 +8,7 @@
 from math import *
 
 # Import PuLP modeler functions
-from pulp import (
+from pulp.pulp import (
     LpInteger,
     LpMaximize,
     LpMinimize,

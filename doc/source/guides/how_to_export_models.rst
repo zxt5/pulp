@@ -25,7 +25,7 @@ Example 1: json
 
 A very simple example taken from the internal tests. Imagine the following problem::
 
-    from pulp import *
+    from pulp.pulp import *
 
     prob = LpProblem("test_export_dict_MIP", LpMinimize)
     x = LpVariable("x", 0, 4)
@@ -122,7 +122,7 @@ Example 1: mps
 
 The same model::
 
-    from pulp import *
+    from pulp.pulp import *
     prob = LpProblem("test_export_dict_MIP", LpMinimize)
     x = LpVariable("x", 0, 4)
     y = LpVariable("y", -1, 1)

@@ -89,6 +89,7 @@ class COIN_CMD(LpSolver_CMD):
         logPath=None,
         timeMode="elapsed",
         maxNodes=None,
+        env=None,
     ):
         """
         :param bool mip: if False, assume LP even if integer variables
@@ -131,6 +132,7 @@ class COIN_CMD(LpSolver_CMD):
             logPath=logPath,
             timeMode=timeMode,
             maxNodes=maxNodes,
+            env=env,
         )
 
     def copy(self):
@@ -196,6 +198,7 @@ class COIN_CMD(LpSolver_CMD):
         else:
             cmds += "-initialSolve "
         cmds += "-printingOptions all "
+        cmds += "-solve "
         cmds += "-solution " + tmpSol + " "
         logPath = self.optionsDict.get("logPath")
         if logPath:
@@ -215,13 +218,15 @@ class COIN_CMD(LpSolver_CMD):
             startupinfo = subprocess.STARTUPINFO()  # type: ignore[attr-defined,unused-ignore]
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW  # type: ignore[attr-defined,unused-ignore]
             cbc = subprocess.Popen(
-                args, stdout=pipe, stderr=pipe, stdin=devnull, startupinfo=startupinfo
+                args, stdout=pipe, env=self.env, stderr=pipe, stdin=devnull, startupinfo=startupinfo
             )
         else:
-            cbc = subprocess.Popen(args, stdout=pipe, stderr=pipe, stdin=devnull)
+            cbc = subprocess.Popen(args, env=self.env, stdout=pipe, stderr=pipe, stdin=devnull)
         if cbc.wait() != 0:
             if pipe:
                 pipe.close()
+            self.delete_tmp_files(tmpMps, tmpLp, tmpSol, tmpMst)
+            return constants.LpStatusError, pipe
             raise PulpSolverError(
                 "Pulp: Error while trying to execute, use msg=True for more details"
                 + self.path
@@ -232,6 +237,8 @@ class COIN_CMD(LpSolver_CMD):
             pass
 
         if not os.path.exists(tmpSol):
+            self.delete_tmp_files(tmpMps, tmpLp, tmpSol, tmpMst)
+            return constants.LpStatusError, pipe
             raise PulpSolverError("Pulp: Error while executing " + self.path)
         (
             status,
@@ -247,7 +254,7 @@ class COIN_CMD(LpSolver_CMD):
         lp.assignConsSlack(slacks, activity=True)
         lp.assignStatus(status, sol_status)
         self.delete_tmp_files(tmpMps, tmpLp, tmpSol, tmpMst)
-        return status
+        return status, pipe
 
     def getOptions(self):
         params_eq = dict(
