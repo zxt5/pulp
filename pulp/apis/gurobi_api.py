@@ -482,6 +482,8 @@ class GUROBI_CMD(LpSolver_CMD):
             pipe.close()
 
         if return_code != 0:
+            self.delete_tmp_files(tmpLp, tmpMst, tmpSol, "gurobi.log")
+            return constants.LpStatusNotSolved, pipe
             raise PulpSolverError("PuLP: Error while trying to execute " + self.path)
         if not os.path.exists(tmpSol):
             # TODO: the status should be infeasible here, I think
@@ -497,7 +499,7 @@ class GUROBI_CMD(LpSolver_CMD):
             lp.assignConsPi(shadowPrices)
             lp.assignConsSlack(slacks)
         lp.assignStatus(status)
-        return status
+        return status, pipe
 
     def readsol(self, filename):
         """Read a Gurobi solution file"""
