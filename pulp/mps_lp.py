@@ -264,6 +264,10 @@ def readMPSSetBounds(line: list[str], variable_dict: dict[str, MPSVariable]):
     bound = line[0]
     var_name = line[2]
 
+    # just return if variable not in dictionary
+    if var_name not in variable_dict:
+        return
+
     if bound == "FR":
         variable_dict[var_name].lowBound = None
         variable_dict[var_name].upBound = None

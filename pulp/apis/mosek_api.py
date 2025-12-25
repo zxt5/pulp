@@ -308,7 +308,7 @@ class MOSEK(LpSolver):
                 var.modified = False
             for con in lp.constraints.values():
                 con.modified = False
-            return lp.status
+            return lp.status, None
 
         def actualResolve(self, lp, inf=1e20, **kwargs):
             """

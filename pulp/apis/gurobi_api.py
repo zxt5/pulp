@@ -398,6 +398,7 @@ class GUROBI_CMD(LpSolver_CMD):
         threads=None,
         logPath=None,
         mip_start=False,
+        env=None,
     ):
         """
         :param bool mip: if False, assume LP even if integer variables
@@ -425,6 +426,7 @@ class GUROBI_CMD(LpSolver_CMD):
             threads=threads,
             gapAbs=gapAbs,
             logPath=logPath,
+            env=env,
         )
 
     def defaultPath(self):
@@ -475,7 +477,7 @@ class GUROBI_CMD(LpSolver_CMD):
         cmd += f" {tmpLp}"
         pipe = self.get_pipe()
 
-        return_code = subprocess.call(cmd.split(), stdout=pipe, stderr=pipe)
+        return_code = subprocess.call(cmd.split(), env=self.env, stdout=pipe, stderr=pipe)
 
         # Close the pipe now if we used it.
         if pipe is not None:
