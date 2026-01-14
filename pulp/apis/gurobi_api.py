@@ -495,7 +495,10 @@ class GUROBI_CMD(LpSolver_CMD):
             # TODO: the status should be infeasible here, I think
             status, values, reducedCosts, shadowPrices, slacks = self.readsol(tmpSol)
         self.delete_tmp_files(tmpLp, tmpMst, tmpSol, "gurobi.log")
-        if status != constants.LpStatusInfeasible:
+        # zxt: this fix a pulp bug
+        # only assign values if the status is optimal, otherwise the solution could be None
+        # if status != constants.LpStatusInfeasible:
+        if status == constants.LpStatusOptimal:
             lp.assignVarsVals(values)
             lp.assignVarsDj(reducedCosts)
             lp.assignConsPi(shadowPrices)
